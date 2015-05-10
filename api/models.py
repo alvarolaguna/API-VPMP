@@ -11,10 +11,10 @@ class Report(models.Model):
     status = models.CharField(max_length = 100, default='')
     name_subject = models.CharField(max_length = 50, default='')
     gender = models.CharField(max_length = 20, default='')
-    birth_date = models.CharField(max_length = 20, default='')
+    birth_date = models.CharField(max_length = 50, default='')
     state = models.CharField(max_length = 100, default='')
     city = models.CharField(max_length = 100, default='')
-    missing_date = models.CharField(max_length = 20, default='')
+    missing_date = models.CharField(max_length = 50, default='')
     description = models.CharField(max_length = 500, default='')
 
 class ImageReport(models.Model):

@@ -206,16 +206,22 @@ def report_comment_detail(request, pk):
         return JSONResponse(serializer.data)
 
 @csrf_exempt
-def report_missingdate_filter(request, year, month, day):
-    if missing_date != "":
-	report= Report.objects.filter(missing_date <= missing_date)
-   
+def report_side_filter_detail(request):
+
+    report = Report.objects.filter(
+        status = status,
+        missing_date = missing_date,
+        state = state,
+        city = city,
+        gender = gender,
+        birth_date = birth_date)
+
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
 @csrf_exempt
-def report_name_filter(request):
+def report_name_filter_detail(request):
 
     report = Report.objects.filter(name_subject = name_subject)
 
@@ -223,27 +229,13 @@ def report_name_filter(request):
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
-def report_status_filter(request, status):
+@csrf_exempt
+def report_name_filter_detail(request):
 
-    if status == "0":
-	report = Report.objects.filter(status = "encontrado")
-    elif status == "1":
-        report = Report.objects.filter(status = "perdido")
-    elif status == "2":
-        report = Report.objects.filter(status = "albergue")
+    report = Report.objects.filter(name_subject = name_subject)
 
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
-def report_gender_filter(request, gender):
-
-    if gender == "0":
-        report = Report.objects.filter(gender = "mujer")
-    elif gender == "1":
-        report = Report.objects.filter(gender = "hombre")
-
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
 

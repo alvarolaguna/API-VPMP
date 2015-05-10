@@ -28,14 +28,15 @@ class UserSerializer(serializers.Serializer):
         return instance
 
 class ReportSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
     user_fk = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name_subject = serializers.CharField(max_length = 100, default='')
     status = serializers.CharField(max_length = 100, default='')
     gender = serializers.CharField(max_length = 20, default='')
-    birth_date = serializers.CharField(max_length = 20, default='')
+    birth_date = serializers.CharField(max_length = 50, default='')
     state = serializers.CharField(max_length = 100, default='')
     city = serializers.CharField(max_length = 100, default='')
-    missing_date = serializers.CharField(max_length = 20, default='')
+    missing_date = serializers.CharField(max_length = 50, default='')
     description = serializers.CharField(max_length = 500, default='')
 
     def create(self, validated_data):
