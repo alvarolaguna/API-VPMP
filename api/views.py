@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from api.models import User, Report, ImageReport, Comment
 from api.serializers import UserSerializer, ReportSerializer, ImageReportSerializer, CommentSerializer
-
+from datetime import date
 
 class JSONResponse(HttpResponse):
 
@@ -195,7 +195,12 @@ def comment_detail(request, pk):
         comment.delete()
         return HttpResponse(status=204)
 
-@csrf_exempt
+def report_all_filter(request, year, month, day, status, state, lowerAge, higherAge)    
+
+    if request.method == 'GET':
+        serializer = ReportSerializer(report, many=True)
+        return JSONResponse(serializer.data)
+
 def report_comment_detail(request, pk):
 
     report = Report.objects.get(pk=pk)
@@ -207,17 +212,18 @@ def report_comment_detail(request, pk):
 
 @csrf_exempt
 def report_missingdate_filter(request, year, month, day):
-    if missing_date != "":
-	report= Report.objects.filter(missing_date <= missing_date)
+    
+    missDate = date(int(year),int(month),int(day))
+    report= Report.objects.filter(missing_date__gte = missDate )
    
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
 @csrf_exempt
-def report_name_filter(request):
+def report_name_filter(request, name):
 
-    report = Report.objects.filter(name_subject = name_subject)
+    report = Report.objects.filter(name_subject = name)
 
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
@@ -225,25 +231,38 @@ def report_name_filter(request):
 
 def report_status_filter(request, status):
 
-    if status == "0":
-	report = Report.objects.filter(status = "encontrado")
-    elif status == "1":
-        report = Report.objects.filter(status = "perdido")
-    elif status == "2":
-        report = Report.objects.filter(status = "albergue")
-
+    report = Report.objects.filter(status = status)
+    
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
 def report_gender_filter(request, gender):
 
-    if gender == "0":
-        report = Report.objects.filter(gender = "mujer")
-    elif gender == "1":
-        report = Report.objects.filter(gender = "hombre")
+    report = Report.objects.filter(gender = gender)
 
     if request.method == 'GET':
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
+
+def report_state_filter(request, state):
+    
+    report = Report.objects.filter(state = state)
+
+    if request.method == 'GET':
+        serializer = ReportSerializer(report, many=True)
+        return JSONResponse(serializer.data)
+
+def report_age_filter(request, lowerAge, higherAge):
+        
+    today = date.today()
+    dateLow = date(today.year - int(lowerAge), today.month, today.day)
+    dateHigh = date(today.year - int(higherAge), today.month, today.day ) 
+    report = Report.objects.filter(birth_date__lte = dateLow,
+                                   birth_date__gte = dateHigh)
+
+    if request.method == 'GET':
+        serializer = ReportSerializer(report, many=True)
+        return JSONResponse(serializer.data)
+      
 
