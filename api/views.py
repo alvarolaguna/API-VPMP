@@ -195,10 +195,21 @@ def comment_detail(request, pk):
         comment.delete()
         return HttpResponse(status=204)
 
-def report_all_filter(request, year, month, day, status, state, lowerAge, higherAge)    
-
+def report_all_filter(request, year, month, day, status,gender, state, lowerAge, higherAge):
+    
+    reports = Report.objects.all()
+    if (year != "null" and month != "null" and day != "null"):
+	reports = missingdate_filter(reports, year, month, day)
+    if (status != "null"):
+        reports = reports.filter(status =  status)
+    if (gender != "null"):
+   	reports = reports.filter(gender = gender)
+    if (state != "null"):
+	reports = reports.filter(state = state)
+    if (lowerAge != "null" and higherAge != "null"):
+	reports = age_filter(reports,lowerAge, higherAge) 
     if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
+        serializer = ReportSerializer(reports, many=True)
         return JSONResponse(serializer.data)
 
 def report_comment_detail(request, pk):
@@ -211,16 +222,11 @@ def report_comment_detail(request, pk):
         return JSONResponse(serializer.data)
 
 @csrf_exempt
-def report_missingdate_filter(request, year, month, day):
+def missingdate_filter(reports, year, month, day):
     
     missDate = date(int(year),int(month),int(day))
-    report= Report.objects.filter(missing_date__gte = missDate )
-   
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
+    return reports.filter(missing_date__gte = missDate)
 
-@csrf_exempt
 def report_name_filter(request, name):
 
     report = Report.objects.filter(name_subject = name)
@@ -229,40 +235,13 @@ def report_name_filter(request, name):
         serializer = ReportSerializer(report, many=True)
         return JSONResponse(serializer.data)
 
-def report_status_filter(request, status):
-
-    report = Report.objects.filter(status = status)
-    
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
-
-def report_gender_filter(request, gender):
-
-    report = Report.objects.filter(gender = gender)
-
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
-
-def report_state_filter(request, state):
-    
-    report = Report.objects.filter(state = state)
-
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
-
-def report_age_filter(request, lowerAge, higherAge):
+def age_filter(reports, lowerAge, higherAge):
         
     today = date.today()
     dateLow = date(today.year - int(lowerAge), today.month, today.day)
     dateHigh = date(today.year - int(higherAge), today.month, today.day ) 
-    report = Report.objects.filter(birth_date__lte = dateLow,
+    return reports.filter(birth_date__lte = dateLow,
                                    birth_date__gte = dateHigh)
-
-    if request.method == 'GET':
-        serializer = ReportSerializer(report, many=True)
-        return JSONResponse(serializer.data)
+    
       
 
