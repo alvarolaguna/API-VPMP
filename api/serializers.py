@@ -5,6 +5,7 @@ from api.models import User, Report, ImageReport, Comment
 
 
 class UserSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
     name = serializers.CharField(max_length = 100, default='')
     email = serializers.EmailField(max_length = 100, default='')
     password = serializers.CharField(max_length = 100, default='')
@@ -62,7 +63,7 @@ class ReportSerializer(serializers.Serializer):
 
 class ImageReportSerializer(serializers.Serializer):
     report_fk = serializers.PrimaryKeyRelatedField(queryset=Report.objects.all())
-    image = serializers.CharField(max_length = 100, default = 'api/media/default/profile_default.png')
+    image = serializers.CharField(max_length=100, default='')
 
     def create(self, validated_data):
         """

@@ -144,8 +144,7 @@ def imageReport_detail(request, pk):
         return JSONResponse(serializer.data)
 
     elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = ImageReportSerializer(imageReport, data=data)
+        serializer = ImageReportSerializer(imageReport, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JSONResponse(serializer.data)
@@ -206,8 +205,10 @@ def report_all_filter(request, year, month, day, status,gender, state, lowerAge,
    	reports = reports.filter(gender = gender)
     if (state != "null"):
 	reports = reports.filter(state = state)
-    if (lowerAge != "null" and higherAge != "null"):
-	reports = age_filter(reports,lowerAge, higherAge) 
+    if (lowerAge != "null"):
+	reports = lowerage_filter(reports,lowerAge) 
+    if (higherAge != "null"):
+	reports = highage_filter(reports, higherAge)
     if request.method == 'GET':
         serializer = ReportSerializer(reports, many=True)
         return JSONResponse(serializer.data)
@@ -238,10 +239,13 @@ def report_name_filter(request, name):
 def age_filter(reports, lowerAge, higherAge):
         
     today = date.today()
-    dateLow = date(today.year - int(lowerAge), today.month, today.day)
-    dateHigh = date(today.year - int(higherAge), today.month, today.day ) 
-    return reports.filter(birth_date__lte = dateLow,
-                                   birth_date__gte = dateHigh)
-    
-      
+    dateLow = date(today.year - int(lowerAge), today.month, today.day) 
+    return reports.filter(birth_date__lte = dateLow)
 
+def higherage_filter(reports, higherAge):
+
+    today = date.today()
+    dateHigh = date(today.year - int(higherAge), today.month, today.day )
+    return reports.filter(birth_date__gte = dateHigh)
+
+                              

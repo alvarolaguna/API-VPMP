@@ -19,7 +19,7 @@ class Report(models.Model):
 
 class ImageReport(models.Model):
     report_fk = models.ForeignKey(Report)
-    image = models.ImageField(upload_to = 'api/media/report_pictures/', default = 'api/media/default/product_default.png')
+    image = models.CharField(max_length = 100, default='')
 
 class Comment(models.Model):
     report_fk = models.ForeignKey(Report)
